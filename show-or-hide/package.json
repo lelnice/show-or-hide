@@ -1,0 +1,29 @@
+{
+  "name": "show-or-hide",
+  "version": "1.0.0",
+  "description": "Vue3 show-or-hide component, which will facilitate the control of showing/hiding an element.",
+  "type": "module",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.ems.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "keywords": [
+    "Vue3",
+    "Vue3 component"
+  ],
+  "author": "lelnice",
+  "license": "MIT",
+  "devDependencies": {
+    "rollup": "^3.3.0",
+    "rollup-plugin-typescript2": "^0.34.1",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "vue": "^3.2.41"
+  },
+  "files": [
+    "dist"
+  ]
+}

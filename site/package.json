@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "hide-when-click-outside": "workspace:*",
+    "show-or-hide": "workspace:*",
     "vue": "^3.2.41"
   },
   "devDependencies": {

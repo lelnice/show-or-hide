@@ -21,41 +21,59 @@
     in your IDE for a better DX
   </p>
   <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
-  <button class="triggerEle">triggerEle</button>
-  <HideWhenClickOutside
-    trigger-ele=".triggerEle"
-    :hide-outside="false"
-    @click="handleClick"
+  <button id="triggerEle1">triggerEle1</button>
+  <!-- <button id="triggerEle2">triggerEle2</button> -->
+  <ShowOrHide
+    class="target1"
+    trigger-ele="#triggerEle1"
+    outside
+    triggerType="mouseenter"
+  >
+    <div>this is a test1</div>
+  </ShowOrHide>
+  <!-- <HideWhenClickOutside
+    trigger-ele="#triggerEle2"
+    outside
+    triggerType="mouseenter"
   >
     <div>this is a test2</div>
-  </HideWhenClickOutside>
+  </HideWhenClickOutside> -->
 </template>
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import { HideWhenClickOutside } from "hide-when-click-outside";
+import { ShowOrHide, handleSelfWrapper } from "show-or-hide";
 
 defineProps({
   msg: String,
 });
 
 const count = ref(0);
-const innerClickFn = (changeFlag) => {
-  console.log(1111);
+const innerClickFn = ({ flag }) => {
+  if (!flag.value) {
+    setTimeout(() => {
+      console.log("自己控制显示");
+      flag.value = true;
+    }, 1000);
+  } else {
+    console.log("自己控制关闭");
+    flag.value = false;
+  }
 };
-const innerClickFnWithArgs = (msg) => {
-  console.log(msg);
-};
-const handleClick = () => {
-  console.log(2222);
-};
+const handleClick = handleSelfWrapper("#triggerEle2", ({ flag }) => {
+  flag.value = !flag.value;
+});
 </script>
 
 <style scoped>
 .read-the-docs {
   color: #888;
 }
-.triggerEle {
+.target1 {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: skyblue;
 }
 </style>
