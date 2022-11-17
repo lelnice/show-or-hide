@@ -23,7 +23,7 @@ const hideWhenClickOutsideProps = () => ({
 export default defineComponent({
   name: "HideWhenClickOutside",
   props: hideWhenClickOutsideProps(),
-  setup(props, { slots }) {
+  setup(props, { slots, attrs }) {
     const { triggerEle, innerClickFn, outsideClickFn, reverse, hideOutside } =
       props;
     const flag = ref(false);
@@ -31,6 +31,8 @@ export default defineComponent({
       flag.value = reverse ? !flag.value : true;
     };
     onMounted(() => {
+      console.log(attrs);
+
       const trigger: HTMLElement =
         typeof triggerEle === "string"
           ? document.querySelector

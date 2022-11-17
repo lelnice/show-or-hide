@@ -22,7 +22,11 @@
   </p>
   <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
   <button class="triggerEle">triggerEle</button>
-  <HideWhenClickOutside trigger-ele=".triggerEle" :hide-outside="false">
+  <HideWhenClickOutside
+    trigger-ele=".triggerEle"
+    :hide-outside="false"
+    @click="handleClick"
+  >
     <div>this is a test2</div>
   </HideWhenClickOutside>
 </template>
@@ -36,15 +40,14 @@ defineProps({
 });
 
 const count = ref(0);
-const innerClickFn = (changeFlag?) => {
+const innerClickFn = (changeFlag) => {
   console.log(1111);
 };
 const innerClickFnWithArgs = (msg) => {
   console.log(msg);
 };
-const outClickFn = (e, { changeFlag }) => {
-  console.log(222);
-  changeFlag();
+const handleClick = () => {
+  console.log(2222);
 };
 </script>
 
