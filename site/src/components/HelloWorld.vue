@@ -21,23 +21,17 @@
     in your IDE for a better DX
   </p>
   <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
-  <button id="triggerEle1">triggerEle1</button>
-  <!-- <button id="triggerEle2">triggerEle2</button> -->
+  <button id="triggerEle1" @click="handleClick()">triggerEle1</button>
   <ShowOrHide
     class="target1"
     trigger-ele="#triggerEle1"
     outside
-    triggerType="mouseenter"
+    reverse
+    :outside-click-fn="outsideClick"
+    self
   >
     <div>this is a test1</div>
   </ShowOrHide>
-  <!-- <HideWhenClickOutside
-    trigger-ele="#triggerEle2"
-    outside
-    triggerType="mouseenter"
-  >
-    <div>this is a test2</div>
-  </HideWhenClickOutside> -->
 </template>
 
 <script lang="ts" setup>
@@ -60,7 +54,11 @@ const innerClickFn = ({ flag }) => {
     flag.value = false;
   }
 };
-const handleClick = handleSelfWrapper("#triggerEle2", ({ flag }) => {
+const outsideClick = (e, { flag }) => {
+  console.log("点到外面了");
+  flag.value = false;
+};
+const handleClick = handleSelfWrapper("#triggerEle1", ({ flag }) => {
   flag.value = !flag.value;
 });
 </script>

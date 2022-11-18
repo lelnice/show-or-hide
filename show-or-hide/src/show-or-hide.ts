@@ -15,7 +15,7 @@ const ShowOrHideProps = () => ({
   triggerEle: {
     type: [String, HTMLElement],
   },
-  innerClickFn: {
+  triggerFn: {
     type: Function as PropType<(...args: any[]) => any>,
   },
   outsideClickFn: Function as PropType<(...args: any[]) => any>,
@@ -31,7 +31,7 @@ export default defineComponent({
   setup(props, { slots }) {
     const {
       triggerEle,
-      innerClickFn,
+      triggerFn,
       outsideClickFn,
       self,
       reverse,
@@ -50,7 +50,7 @@ export default defineComponent({
       let listener: (e: Event) => void;
       if (triggerType === "click") {
         listener = (e: Event) => {
-          const inner = document.querySelector(".hide_when_click_outside");
+          const inner = document.querySelector("._show_or_hide_wrapper");
           if (!inner?.contains(e.target as Node)) {
             outsideClickFn ? outsideClickFn(e, { flag }) : (flag.value = false);
             document.removeEventListener("click", listener);
@@ -67,10 +67,10 @@ export default defineComponent({
         (e: Event) => {
           e.stopPropagation();
           !self
-            ? innerClickFn
+            ? triggerFn
               ? handleSelfWrapper(
                   triggerEle,
-                  innerClickFn
+                  triggerFn
                 )({ flag: flags.get(triggerEle) })
               : flag.value && reverse
               ? (flag.value = false)
@@ -101,7 +101,7 @@ export default defineComponent({
     return () => {
       const children = slots.default?.();
       return flag.value
-        ? h("div", { class: "hide_when_click_outside" }, [children])
+        ? h("div", { class: "_show_or_hide_wrapper" }, [children])
         : null;
     };
   },
@@ -111,7 +111,6 @@ export const handleSelfWrapper = (
   triggerEle: string | HTMLElement,
   fn: (...args: any[]) => any
 ) => {
-  return (...args: any[]) => {
-    fn(...args, { flag: flags.get(triggerEle) });
-  };
+  const has = flags.has(triggerEle);
+  return (...args: any[]) => fn(...args, { flag: flags.get(triggerEle) });
 };

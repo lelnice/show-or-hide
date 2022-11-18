@@ -21,7 +21,7 @@ importers:
   site:
     specifiers:
       '@vitejs/plugin-vue': ^3.2.0
-      show-or-hide: workspace:^1.0.0
+      show-or-hide: workspace:*
       vite: ^3.2.3
       vue: ^3.2.41
     dependencies:
