@@ -8,6 +8,7 @@ import {
   watch,
   reactive,
   onUnmounted,
+  computed,
 } from "vue";
 const flags = reactive<Map<string | HTMLElement, Ref<boolean>>>(new Map());
 
@@ -18,8 +19,8 @@ const ShowOrHideProps = () => ({
   triggerFn: {
     type: Function as PropType<(...args: any[]) => any>,
   },
-  outsideClickFn: Function as PropType<(...args: any[]) => any>,
-  self: Boolean,
+  outsideFn: Function as PropType<(...args: any[]) => any>,
+  selfControl: Boolean,
   reverse: Boolean,
   outside: Boolean,
   triggerType: { type: String, default: "click" },
@@ -29,79 +30,74 @@ export default defineComponent({
   name: "ShowOrHide",
   props: ShowOrHideProps(),
   setup(props, { slots }) {
-    const {
-      triggerEle,
-      triggerFn,
-      outsideClickFn,
-      self,
-      reverse,
-      outside,
-      triggerType,
-    } = props;
     const flag = ref(false);
-    flags.set(triggerEle, flag);
+    flags.set(props.triggerEle, flag);
+    const triggerListener = (e: Event) => {
+      e.stopPropagation();
+      !props.selfControl
+        ? props.triggerFn
+          ? handleSelfWrapper(
+              props.triggerEle,
+              props.triggerFn
+            )(flags.get(props.triggerEle))
+          : flag.value && props.reverse
+          ? (flag.value = false)
+          : (flag.value = true)
+        : null;
+    };
     onMounted(() => {
       const trigger: HTMLElement =
-        typeof triggerEle === "string"
+        typeof props.triggerEle === "string"
           ? document.querySelector
-            ? document.querySelector(triggerEle)
+            ? document.querySelector(props.triggerEle)
             : null
-          : triggerEle;
-      let listener: (e: Event) => void;
-      if (triggerType === "click") {
-        listener = (e: Event) => {
-          const inner = document.querySelector("._show_or_hide_wrapper");
+          : props.triggerEle;
+      let outsideListener: (e: Event) => void;
+      if (props.triggerType === "click") {
+        outsideListener = (e: Event) => {
+          const inner = document.querySelector(".__show_or_hide_wrapper");
           if (!inner?.contains(e.target as Node)) {
-            outsideClickFn ? outsideClickFn(e, { flag }) : (flag.value = false);
-            document.removeEventListener("click", listener);
+            props.outsideFn
+              ? props.outsideFn(e, { flag })
+              : (flag.value = false);
+            document.removeEventListener("click", outsideListener);
           }
         };
-      } else if (triggerType === "mouseenter") {
-        listener = (e: Event) => {
-          outsideClickFn ? outsideClickFn(e, { flag }) : (flag.value = false);
-          trigger.removeEventListener("mouseleave", listener);
+      } else if (props.triggerType === "mouseenter") {
+        outsideListener = (e: Event) => {
+          props.outsideFn ? props.outsideFn(e, { flag }) : (flag.value = false);
+          trigger.removeEventListener("mouseleave", outsideListener);
         };
       }
+
       trigger.addEventListener(
-        triggerType as keyof HTMLElementEventMap,
-        (e: Event) => {
-          e.stopPropagation();
-          !self
-            ? triggerFn
-              ? handleSelfWrapper(
-                  triggerEle,
-                  triggerFn
-                )({ flag: flags.get(triggerEle) })
-              : flag.value && reverse
-              ? (flag.value = false)
-              : (flag.value = true)
-            : null;
-        }
+        props.triggerType as keyof HTMLElementEventMap,
+        triggerListener
       );
       watch(
         () => flag.value,
         () => {
-          if (flag.value && outside) {
-            switch (triggerType) {
+          if (flag.value && props.outside) {
+            switch (props.triggerType) {
               case "click":
-                document.addEventListener("click", listener);
+                document.addEventListener("click", outsideListener);
                 break;
               case "mouseenter":
-                trigger.addEventListener("mouseleave", listener);
+                trigger.addEventListener("mouseleave", outsideListener);
                 break;
             }
           }
         }
       );
       onUnmounted(() => {
-        flags.delete(triggerEle);
+        flags.delete(props.triggerEle);
       });
     });
 
     return () => {
       const children = slots.default?.();
       return flag.value
-        ? h("div", { class: "_show_or_hide_wrapper" }, [children])
+        ? h("div", { class: "__show_or_hide_wrapper" }, [children])
         : null;
     };
   },
@@ -111,6 +107,5 @@ export const handleSelfWrapper = (
   triggerEle: string | HTMLElement,
   fn: (...args: any[]) => any
 ) => {
-  const has = flags.has(triggerEle);
-  return (...args: any[]) => fn(...args, { flag: flags.get(triggerEle) });
+  return (...args: any[]) => fn(...args, flags.get(triggerEle));
 };
