@@ -1,3 +1,3 @@
-import ShowOrHide, { handleSelfWrapper } from "./show-or-hide";
+import ShowOrHide, { handleSelfWrapper, close } from "./show-or-hide";
 
-export { ShowOrHide, handleSelfWrapper };
+export { ShowOrHide, handleSelfWrapper, close };

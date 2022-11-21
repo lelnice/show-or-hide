@@ -15,8 +15,8 @@
     </div>
   </div>
   <div class="content">
-    <ControlBar></ControlBar>
     <PlaygroundPart></PlaygroundPart>
+    <ControlBar></ControlBar>
   </div>
 </template>
 <script setup lang="ts">
@@ -92,6 +92,7 @@ import ControlBar from '@/components/ControlBar.vue'
   }
   .content {
     flex-direction: column;
+    padding: 10px;
   }
 }
 </style>

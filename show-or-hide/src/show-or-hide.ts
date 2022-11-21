@@ -16,9 +16,9 @@ const ShowOrHideProps = () => ({
   triggerEle: {
     type: [String, HTMLElement],
   },
-  triggerFn: {
+  /*  triggerFn: {
     type: Function as PropType<(...args: any[]) => any>,
-  },
+  }, */
   outsideFn: Function as PropType<(...args: any[]) => any>,
   selfControl: Boolean,
   reverse: Boolean,
@@ -34,13 +34,18 @@ export default defineComponent({
     flags.set(props.triggerEle, flag);
     const triggerListener = (e: Event) => {
       e.stopPropagation();
-      !props.selfControl
+      /* !props.selfControl
         ? props.triggerFn
           ? handleSelfWrapper(
               props.triggerEle,
               props.triggerFn
             )(flags.get(props.triggerEle))
           : flag.value && props.reverse
+          ? (flag.value = false)
+          : (flag.value = true)
+        : null; */
+      !props.selfControl
+        ? flag.value && props.reverse
           ? (flag.value = false)
           : (flag.value = true)
         : null;
@@ -75,7 +80,7 @@ export default defineComponent({
         triggerListener
       );
       watch(
-        () => flag.value,
+        () => [flag.value, props.outside],
         () => {
           if (flag.value && props.outside) {
             switch (props.triggerType) {
@@ -108,4 +113,9 @@ export const handleSelfWrapper = (
   fn: (...args: any[]) => any
 ) => {
   return (...args: any[]) => fn(...args, flags.get(triggerEle));
+};
+
+export const close = (triggerEle: string | HTMLElement) => {
+  const flag = flags.get(triggerEle);
+  flag.value = false;
 };
