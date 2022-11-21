@@ -39,6 +39,7 @@ import { props, hasCloseBtn } from './common'
   }
 
   .content {
+    position: relative;
     flex-direction: column;
     justify-content: flex-start;
     font-size: 20px;
@@ -48,6 +49,22 @@ import { props, hasCloseBtn } from './common'
     margin-top: 20px;
     border-radius: 10px;
     padding: 10px;
+    .close {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: var(--theme-color);
+      cursor: pointer;
+      user-select: none;
+      font-size: 20px;
+    }
   }
 }
 .v-enter-active,
@@ -67,22 +84,6 @@ import { props, hasCloseBtn } from './common'
       transform: translateX(-50%);
       font-size: 14px;
       z-index: 1;
-      .close {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background-color: var(--theme-color);
-        cursor: pointer;
-        user-select: none;
-        font-size: 20px;
-      }
     }
     .v-enter-from,
     .v-leave-to {
