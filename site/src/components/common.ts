@@ -7,3 +7,5 @@ export const props = reactive({
 })
 
 export const hasCloseBtn = ref(false)
+
+export const selfControl = ref(false)

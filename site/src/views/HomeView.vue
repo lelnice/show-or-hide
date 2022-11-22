@@ -25,6 +25,8 @@ import ControlBar from '@/components/ControlBar.vue'
 </script>
 <style lang="less" scoped>
 .header {
+  position: sticky;
+  top: 0;
   width: 100%;
   height: 50px;
   display: flex;
@@ -34,6 +36,7 @@ import ControlBar from '@/components/ControlBar.vue'
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   background-color: #ffa631;
+  z-index: 1;
   overflow: hidden;
   .logo {
     font-weight: 700;

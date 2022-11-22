@@ -11,9 +11,9 @@ export default defineConfig({
     vue(),
     vueJsx(),
     prismjs({
-      languages: ['html'],
-      plugins: ['line-numbers'], //配置显示行号插件
-      theme: 'solarizedlight', //主题名称
+      languages: ['html', 'typescript'],
+      plugins: ['line-numbers'],
+      theme: 'solarizedlight',
       css: true,
     }),
   ],
@@ -21,5 +21,9 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
+  },
+  base: '/show-or-hide',
+  build: {
+    outDir: '../docs/',
   },
 })

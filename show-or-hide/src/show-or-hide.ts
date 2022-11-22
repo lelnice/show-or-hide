@@ -8,17 +8,13 @@ import {
   watch,
   reactive,
   onUnmounted,
-  computed,
+  nextTick,
 } from "vue";
 const flags = reactive<Map<string | HTMLElement, Ref<boolean>>>(new Map());
-
 const ShowOrHideProps = () => ({
   triggerEle: {
     type: [String, HTMLElement],
   },
-  /*  triggerFn: {
-    type: Function as PropType<(...args: any[]) => any>,
-  }, */
   outsideFn: Function as PropType<(...args: any[]) => any>,
   selfControl: Boolean,
   reverse: Boolean,
@@ -34,21 +30,11 @@ export default defineComponent({
     flags.set(props.triggerEle, flag);
     const triggerListener = (e: Event) => {
       e.stopPropagation();
-      /* !props.selfControl
-        ? props.triggerFn
-          ? handleSelfWrapper(
-              props.triggerEle,
-              props.triggerFn
-            )(flags.get(props.triggerEle))
-          : flag.value && props.reverse
-          ? (flag.value = false)
-          : (flag.value = true)
-        : null; */
-      !props.selfControl
-        ? flag.value && props.reverse
-          ? (flag.value = false)
-          : (flag.value = true)
-        : null;
+      props.selfControl
+        ? null
+        : flag.value && props.reverse
+        ? (flag.value = false)
+        : (flag.value = true);
     };
     onMounted(() => {
       const trigger: HTMLElement =
@@ -57,6 +43,7 @@ export default defineComponent({
             ? document.querySelector(props.triggerEle)
             : null
           : props.triggerEle;
+
       let outsideListener: (e: Event) => void;
       if (props.triggerType === "click") {
         outsideListener = (e: Event) => {
@@ -83,14 +70,16 @@ export default defineComponent({
         () => [flag.value, props.outside],
         () => {
           if (flag.value && props.outside) {
-            switch (props.triggerType) {
-              case "click":
-                document.addEventListener("click", outsideListener);
-                break;
-              case "mouseenter":
-                trigger.addEventListener("mouseleave", outsideListener);
-                break;
-            }
+            nextTick(() => {
+              switch (props.triggerType) {
+                case "click":
+                  document.addEventListener("click", outsideListener);
+                  break;
+                case "mouseenter":
+                  trigger.addEventListener("mouseleave", outsideListener);
+                  break;
+              }
+            });
           }
         }
       );
@@ -108,7 +97,7 @@ export default defineComponent({
   },
 });
 
-export const handleSelfWrapper = (
+export const selfControlWrapper = (
   triggerEle: string | HTMLElement,
   fn: (...args: any[]) => any
 ) => {

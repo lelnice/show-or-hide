@@ -1,41 +1,60 @@
 <template>
   <div class="playground_part">
-    <div>
-      <span class="btn" id="triggerEle">click me!</span>
+    <div class="wrapper">
+      <div>
+        <span
+          class="btn"
+          id="triggerEle"
+          @click="props.selfControl ? handleSelf('param1', 'param2') : null"
+          >click me!</span
+        >
+      </div>
+      <transition>
+        <ShowOrHide
+          class="content"
+          trigger-ele="#triggerEle"
+          :outside="props.outside"
+          :reverse="props.reverse"
+          :self-control="props.selfControl"
+        >
+          <p>The element you want to show/hide.</p>
+          <p v-show="props.reverse">
+            reverse is on, you can click button to hide this element.
+          </p>
+          <p v-show="props.outside">
+            outside is on, you can click outside this element to hide it.
+          </p>
+          <div v-if="hasCloseBtn" class="close" @click="close('#triggerEle')">
+            ×
+          </div>
+        </ShowOrHide>
+      </transition>
     </div>
-    <transition>
-      <ShowOrHide
-        class="content"
-        trigger-ele="#triggerEle"
-        :outside="props.outside"
-        :reverse="props.reverse"
-        :self-control="props.selfControl"
-      >
-        <p>The element you want to show/hide.</p>
-        <p v-show="props.reverse">
-          reverse is on, you can click button to hide this element.
-        </p>
-        <p v-show="props.outside">
-          outside is on, you can click outside this element to hide it.
-        </p>
-        <div v-if="hasCloseBtn" class="close" @click="close('#triggerEle')">
-          ×
-        </div>
-      </ShowOrHide>
-    </transition>
   </div>
 </template>
 <script lang="ts" setup>
-import { ShowOrHide, close } from 'show-or-hide'
+import { ShowOrHide, close, selfControlWrapper } from 'show-or-hide'
 import { props, hasCloseBtn } from './common'
+const handleSelf = selfControlWrapper('#triggerEle', (param1, param2, flag) => {
+  alert(
+    `It's to ${
+      flag.value ? 'hide' : 'show'
+    }.\nparam1:${param1}, param2:${param2}`,
+  )
+  flag.value = !flag.value
+})
 </script>
 <style lang="less" scoped>
 .playground_part {
   flex: 1;
   margin-right: 20px;
-  & > div {
-    display: flex;
-    justify-content: center;
+  .wrapper {
+    position: sticky;
+    top: 60px;
+    & > div {
+      display: flex;
+      justify-content: center;
+    }
   }
 
   .content {
@@ -74,8 +93,15 @@ import { props, hasCloseBtn } from './common'
 
 @media screen and (max-width: 992px) {
   .playground_part {
+    position: sticky;
+    top: 60px;
     margin-right: 0;
     margin-bottom: 20px;
+    z-index: 1;
+    .wrapper {
+      position: relative;
+      top: unset;
+    }
     .content {
       position: fixed;
       top: 100px;

@@ -2,23 +2,41 @@
   <div class="control_bar">
     <div class="part">
       <h2>Basic Usage</h2>
+      <p>
+        The only required property is trigger-ele. It could be a class name, an
+        id, or a HTMLElement, which represents the trigger element, such as a
+        button.
+      </p>
+      <p>
+        You can click label(<span class="clickable_desc">outside</span>,
+        <span class="clickable_desc">reverse</span>) below to see how it works.
+      </p>
       <pre class="hx-scroll lineNumbers code_wrapper">
-        <code v-html="htmlContent"></code>
+        <code v-html="basicContent"></code>
     </pre>
       <p v-show="props.reverse">
-        reverse is on, you can click button to hide this element.
+        reverse is on, you can click button to hide the element.
       </p>
       <p v-show="props.outside">
-        outside is on, you can click outside this element to hide it.
+        outside is on, you can click outside of the element to hide it.
       </p>
     </div>
     <div class="part">
-      <h2>Additional close function</h2>
+      <h2>Additional Close Function</h2>
       <p>
         Although this component is out of box, you can add your own element,
         such as a close button, to hide the element you control.
       </p>
-      <div class="toggles">
+      <p>Import from 'show-or-hide'</p>
+      <pre class="lineNumbers code_wrapper">
+        <code class="language-ts">{{buttonImport}}</code>
+      </pre>
+      <p>Then you can bind this function to 'click' event.</p>
+      <pre class="lineNumbers code_wrapper">
+        <code class="language-html">{{buttonHtml}}</code>
+      </pre>
+      <p>
+        Try to use a close button here:
         <button
           class="toggle"
           :class="{ checked: hasCloseBtn }"
@@ -26,50 +44,65 @@
           @click="hasCloseBtn = !hasCloseBtn"
         ></button
         >close button
-      </div>
-      <pre class="hx-scroll lineNumbers code_wrapper">
-        <code v-html="highlight(closeBtnContent,'html')"></code>
-    </pre>
+      </p>
+    </div>
+    <div class="part">
+      <h2>Self-Control and Pass Parameters</h2>
+      <p>
+        How to do when you want to pass some parameters or do some other
+        operations like settimeout?
+      </p>
+      <p>
+        You can import <code>selfControlWrapper</code> function to achive this.
+        Don't forget to set self-control to true.
+      </p>
+      <p>Note that property reverse will not work in this mode.</p>
+      self control:<button
+        class="toggle"
+        :class="{ checked: props.selfControl }"
+        @click="props.selfControl = !props.selfControl"
+      ></button>
+      <pre class="lineNumbers code_wrapper">
+        <code class="language-html">{{wrapperHtml}}</code>
+      </pre>
+      <pre class="lineNumbers code_wrapper">
+        <code class="language-ts">{{wrapperImport}}</code>
+      </pre>
+    </div>
+    <div class="part">
+      <h2>Trigger Type</h2>
+      <p>
+        The component supports 'click' and 'mouseenter' listener. The default
+        value is 'click'.
+      </p>
+      <pre class="lineNumbers code_wrapper">
+        <code class="language-html">{{typeHtml}}</code>
+      </pre>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted } from 'vue'
 import { props, hasCloseBtn } from './common'
+import {
+  basicContent,
+  buttonHtml,
+  buttonImport,
+  wrapperHtml,
+  wrapperImport,
+  typeHtml,
+} from './code'
 import Prism from 'prismjs'
-const htmlContent = ref(`
-<div>
-  <span class="btn" id="triggerEle">
-    click me!
-  </span>
-</div>
-<transition>
-  <ShowOrHide class="content" trigger-ele="#triggerEle" outside reverse>
-      <div>The element you want show/hide</div>
-  </ShowOrHide>
-  <div class="close" @click="close('#triggerEle')">×</div>
-</transition>`)
-htmlContent.value = highlight(htmlContent.value, 'html')
-const closeBtnContent = ref(
-  `
-  <div class="close" @click="close('#triggerEle')">×</div>`,
-)
-
-watch(
-  () => hasCloseBtn.value,
-  (val) => {
-    console.log(val)
-  },
-)
+basicContent.value = highlight(basicContent.value, 'html')
 
 const parseProps = () => {
-  const result = htmlContent.value.match(
+  const result = basicContent.value.match(
     /<span class="token attr-name">\w+<\/span>/gi,
   )
   result?.forEach((item) => {
     const field = item.match(/outside|reverse/gi)
     if (field) {
-      htmlContent.value = htmlContent.value.replace(
+      basicContent.value = basicContent.value.replace(
         item,
         `<span class='clickable'>${field}</span>`,
       )
@@ -105,6 +138,7 @@ onMounted(() => {
   background-color: #f6f8fa;
   white-space: pre-wrap;
 }
+.clickable_desc,
 :deep(.clickable) {
   background-color: #969696;
   color: #fff;
@@ -138,7 +172,7 @@ onMounted(() => {
   user-select: none;
   &::after {
     position: absolute;
-    top: 1px;
+    top: 2px;
     left: 1px;
     width: 18px;
     height: 18px;
